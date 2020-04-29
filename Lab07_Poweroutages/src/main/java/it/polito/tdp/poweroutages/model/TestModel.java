@@ -17,8 +17,16 @@ public class TestModel {
 		
 		System.out.println (model.controlloAnno(podao.elencoBlackout(new Nerc (3, "MAAC"))));
 		
+		System.out.println (model.trovaSequenza(new Nerc (2, "HECO"), 1, 40));
+		System.out.println(model.numeroPersone(model.trovaSequenza(new Nerc (2, "HECO"), 1, 40)));
+		System.out.println(model.oreDisservizio(model.trovaSequenza(new Nerc (2, "HECO"), 1, 40)));
+		
 		System.out.println (model.trovaSequenza(new Nerc (3, "MAAC"), 4, 200));
-
+		System.out.println(model.numeroPersone(model.trovaSequenza(new Nerc (3, "MAAC"), 4, 200)));
+		System.out.println(model.oreDisservizio(model.trovaSequenza(new Nerc (3, "MAAC"), 4, 200)));
+		
+		
+		
 	}
 	
 	

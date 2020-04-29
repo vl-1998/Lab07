@@ -27,43 +27,44 @@ public class Model {
 	
 	public List<PowerOutages> trovaSequenza (Nerc nerc, int X, int Y) {
 		soluzione = new ArrayList<>();
-		disponibili= podao.elencoBlackout(nerc);
+		disponibili= new ArrayList <PowerOutages> (podao.elencoBlackout(nerc));
 		bestCoinvolti=0;
 		
 		List <PowerOutages> parziale = new ArrayList <>();
 		cerca(parziale, 0, X, Y, disponibili);
 		
-		return soluzione;
+		return this.soluzione;
 			
 	}
 	
-	private List <PowerOutages> cerca(List<PowerOutages> parziale, int livello, int X, 
+	
+	private void cerca(List<PowerOutages> parziale, int livello, int X, 
 			int Y, List <PowerOutages> disponibili){
-		
+		List <PowerOutages> rimanenti = new ArrayList <PowerOutages> (disponibili);
 		//caso terminale
-		if (disponibili.size()==0 && this.numeroPersone(parziale)>bestCoinvolti) {
+		if ((rimanenti.size()==0 && this.numeroPersone(parziale)>bestCoinvolti) ||
+				(oreDisservizio(parziale)==Y) && this.numeroPersone(parziale)>bestCoinvolti) {
 			this.soluzione= new ArrayList <>(parziale);
 			bestCoinvolti =this.numeroPersone(parziale);
 		}
 		
 		//caso intermedio 
 		else {
-			for (PowerOutages p: disponibili) {
-				boolean flag=true;
-				if (p.getDifferenzaOre()>=Y) {
-					flag=false;
+			for (PowerOutages p: rimanenti) {
+				parziale.add(p);
+				
+				if (this.controllo(parziale, X, Y)) {
+					disponibili.remove(p);
+					cerca(parziale,livello+1, X, Y, disponibili);
+					parziale.remove(p);
 				}
-				if (controllo(parziale, X, Y) && flag==true) {						
-						parziale.add(p);
-						List <PowerOutages> restanti = new ArrayList <> (disponibili);
-						restanti.remove(p);
-						cerca(parziale, livello+1, X, Y, restanti);
-					}
+				else {
+					parziale.remove(p);
+					disponibili.remove(p);	
 				}
 			}
-		//}
-
-		return soluzione;
+			
+		}	
 	
 	}
 
@@ -73,7 +74,7 @@ public class Model {
 		for (PowerOutages p: parziale) {
 			coinvolti += p.getCustomerAffected();
 		}
-		
+		 
 		return coinvolti;
 	}
 	
@@ -106,10 +107,7 @@ public class Model {
 	}
 	
 	public boolean controllo (List <PowerOutages> parziale, int X, int Y) {
-		if (parziale.size()==0)  
-			return true;
-		
-		if (this.oreDisservizio(parziale)< Y && this.controlloAnno(parziale)<X) 
+		if (this.oreDisservizio(parziale)<=Y && this.controlloAnno(parziale)<=X) 
 			return true;
 	
 		

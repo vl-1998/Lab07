@@ -47,7 +47,7 @@ public class FXMLController {
     	List <PowerOutages> risultati = new ArrayList <> (model.trovaSequenza(nerc, X, Y));
     	
     	for (PowerOutages p: risultati) {
-    		txtResult.appendText(p.toString());
+    		txtResult.appendText(p.toString()+"\n");
     	}
 
     }

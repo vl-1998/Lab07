@@ -115,7 +115,7 @@ public class PowerOutages {
 	@Override
 	public String toString() {
 		return annoInizio + " " + inizioBlackout
-				+ fineBlackout + " " + differenzaOre + " " + customerAffected+"\n";
+				+ " "+ fineBlackout + " " + differenzaOre + " " + customerAffected;
 	}
 	
 	
