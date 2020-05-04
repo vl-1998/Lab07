@@ -13,6 +13,7 @@ public class Model {
 	private List <PowerOutages> soluzione;
 	private List <PowerOutages> disponibili;
 	private int bestCoinvolti;
+	int count=0;
 	
 	
 	
@@ -30,43 +31,45 @@ public class Model {
 		disponibili= new ArrayList <PowerOutages> (podao.elencoBlackout(nerc));
 		bestCoinvolti=0;
 		
+		count=0;
 		List <PowerOutages> parziale = new ArrayList <>();
-		cerca(parziale, 0, X, Y, disponibili);
+		cerca(parziale, 0, X, Y);
 		
 		return this.soluzione;
 			
 	}
-	
+
 	
 	private void cerca(List<PowerOutages> parziale, int livello, int X, 
-			int Y, List <PowerOutages> disponibili){
-		List <PowerOutages> rimanenti = new ArrayList <PowerOutages> (disponibili);
-		//caso terminale
-		if ((rimanenti.size()==0 && this.numeroPersone(parziale)>bestCoinvolti) ||
-				(oreDisservizio(parziale)==Y) && this.numeroPersone(parziale)>bestCoinvolti) {
-			this.soluzione= new ArrayList <>(parziale);
-			bestCoinvolti =this.numeroPersone(parziale);
+			int Y ) {
+		if (livello==disponibili.size()+1) {
+			return;
 		}
 		
-		//caso intermedio 
-		else {
-			for (PowerOutages p: rimanenti) {
-				parziale.add(p);
-				
-				if (this.controllo(parziale, X, Y)) {
-					disponibili.remove(p);
-					cerca(parziale,livello+1, X, Y, disponibili);
-					parziale.remove(p);
-				}
-				else {
-					parziale.remove(p);
-					disponibili.remove(p);	
-				}
+		if(!parziale.isEmpty()) {
+		
+			if(!this.controllo(parziale, X, Y)) {
+				return;
 			}
 			
-		}	
-	
+			if (this.numeroPersone(parziale)>bestCoinvolti) {
+				this.soluzione= new ArrayList <>(parziale);
+				bestCoinvolti =this.numeroPersone(parziale);
+			}
+			
+		}
+		
+		for (PowerOutages p : disponibili) {
+			if (!parziale.contains(p)) {
+				parziale.add(p);
+				cerca(parziale,livello+1,X,Y);
+				parziale.remove(p);
+				
+			}
+		}
+		
 	}
+	
 
 	public int numeroPersone(List<PowerOutages> parziale) {
 		int coinvolti=0;
@@ -107,6 +110,9 @@ public class Model {
 	}
 	
 	public boolean controllo (List <PowerOutages> parziale, int X, int Y) {
+		if (parziale.size()==0) {
+			return true;
+		}
 		if (this.oreDisservizio(parziale)<=Y && this.controlloAnno(parziale)<=X) 
 			return true;
 	
@@ -114,5 +120,15 @@ public class Model {
 		return false;
 		
 	}
-
+	
 }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
